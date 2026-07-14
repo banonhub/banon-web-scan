@@ -1,0 +1,321 @@
+{
+  "application": {
+    "command_name": "banon-web-scan",
+    "description": "Autonomous Selenium-powered QA security testing framework",
+    "reachability_timeout": 5,
+    "reachability_paths": ["/", "/robots.txt"],
+    "reachable_status_codes": [200, 201, 202, 204, 301, 302, 401, 403]
+  },
+  "browser": {
+    "headless": false,
+    "page_load_timeout": 10,
+    "capture_browser_logs": true,
+    "common_arguments": ["--disable-gpu", "--ignore-certificate-errors"],
+    "headless_arguments": ["--headless=new", "--no-sandbox", "--disable-dev-shm-usage"],
+    "visible_arguments": ["--start-maximized"],
+    "watch": {
+      "page_pause": 0.9,
+      "plugin_pause": 0.45,
+      "action_pause": 0.8,
+      "highlight_duration": 0.6,
+      "highlight_outline": "3px solid #00aaff",
+      "highlight_background": "rgba(0, 170, 255, 0.16)",
+      "scroll_block": "center"
+    },
+    "window": {
+      "layout": "split",
+      "split_ratio": 0.5
+    }
+  },
+  "network": {
+    "http_client": "httpx",
+    "http2": true,
+    "verify_tls": false,
+    "default_timeout": 5,
+    "user_agent": "banon-web-scanner"
+  },
+  "scope": {
+    "same_origin_only": true,
+    "allowed_schemes": ["http", "https"],
+    "include_fragments": true,
+    "query_policy": "sort",
+    "excluded_paths": ["/logout", "/log-out", "/signout", "/sign-out"],
+    "excluded_extensions": [".css", ".js", ".png", ".jpg", ".jpeg", ".gif", ".svg", ".ico", ".woff", ".woff2", ".ttf", ".pdf", ".zip"]
+  },
+  "discovery": {
+    "maximum_pages": 50,
+    "maximum_depth": 6,
+    "probe_timeout": 5,
+    "probe_workers": 8,
+    "reachable_status_codes": [200, 201, 202, 204, 301, 302, 401, 403]
+  },
+  "inspection": {
+    "marker_attribute": "data-banon-runtime-id",
+    "frame_selector": "iframe, frame",
+    "maximum_frame_depth": 5,
+    "secret_control_types": ["password"],
+    "control_selector": "input, textarea, select, button, a[href], area[href], [role='button'], [role='link'], [role='textbox'], [role='combobox'], [role='checkbox'], [role='radio'], [contenteditable='true']",
+    "link_selector": "a[href], area[href]",
+    "message_selectors": [".error", ".alert", ".flash", ".message", "[role='alert']", "[aria-live]"],
+    "captcha_selectors": ["iframe[src*='captcha' i]", "[class*='captcha' i]", "[id*='captcha' i]", "[data-sitekey]"],
+    "captcha_text_markers": ["captcha", "verify you are human", "human verification"],
+    "captcha_policy": "report",
+    "captcha_barrier_message": "Human verification must be completed manually before the scan can continue."
+  },
+  "interaction": {
+    "ready_state": ["interactive", "complete"],
+    "post_action_delay": 0.6,
+    "dom_stability": {
+      "poll_interval": 0.2,
+      "stable_polls": 3,
+      "maximum_wait": 4
+    }
+  },
+  "authentication": {
+    "failed_attempts": 5,
+    "default_username": "admin",
+    "identity_semantic_terms": ["user", "username", "email", "account", "login", "identity"],
+    "identity_control_types": ["text", "email"],
+    "registration_semantic_terms": ["register", "registration", "sign up", "signup", "create account", "new account", "confirm password"],
+    "form_action_control_types": ["button", "submit"],
+    "logout_semantic_terms": ["logout", "log out", "sign out", "signout"],
+    "transition_signals": {
+      "minimum_signal_count": 2
+    }
+  },
+  "workflows": {
+    "maximum_states": 100,
+    "maximum_steps": 8,
+    "maximum_transitions_per_page": 12,
+    "activate_safe_controls": true,
+    "explore_safe_forms": false,
+    "explore_dynamic_panels": true,
+    "maximum_dynamic_panels": 6,
+    "navigational_control_types": ["button", "submit", "a", "area", "link"],
+    "fillable_control_types": ["text", "email", "search", "textarea", "number", "tel", "select-one", "checkbox", "radio"],
+    "safe_values": {
+      "default": "banon_workflow",
+      "email": "banon@example.invalid",
+      "number": "1",
+      "checkbox": "true",
+      "radio": "true"
+    },
+    "blocked_control_terms": ["delete", "remove", "purchase", "pay", "transfer", "submit", "save", "upload", "logout", "sign out", "change password", "reset password"]
+  },
+  "safety": {
+    "state_changing_markers": ["delete", "remove", "logout", "log out", "sign out", "transfer", "checkout", "purchase", "payment", "upload", "register", "sign-up", "signup", "create-account", "password reset", "change password"]
+  },
+  "plugins": {
+    "directory": "plugins",
+    "package": "plugins",
+    "file_pattern": "*.py",
+    "ignored_filename_prefix": "__",
+    "all_token": "all",
+    "enabled": ["all"],
+    "aliases": {},
+    "settings": {
+      "page_health": {
+        "request_timeout": 5,
+        "minimum_body_length": 40,
+        "server_error_status_codes": [500, 501, 502, 503, 504],
+        "error_content_signatures": [
+          "internal server error",
+          "traceback (most recent call last)",
+          "unhandled exception",
+          "stack trace",
+          "application error",
+          "something went wrong",
+          "service unavailable",
+          "bad gateway",
+          "gateway timeout"
+        ],
+        "blank_page_severity": "MEDIUM",
+        "server_error_severity": "HIGH",
+        "error_screen_severity": "HIGH"
+      },
+      "console_errors": {
+        "report_levels": ["SEVERE"],
+        "ignore_substrings": ["favicon.ico"],
+        "maximum_messages": 20,
+        "severity": "MEDIUM"
+      },
+      "headers": {
+        "request_timeout": 5,
+        "checks": [
+          {"header": "Content-Security-Policy", "severity": "MEDIUM", "https_only": false},
+          {"header": "Strict-Transport-Security", "severity": "MEDIUM", "https_only": true},
+          {"header": "X-Frame-Options", "severity": "MEDIUM", "https_only": false},
+          {"header": "X-Content-Type-Options", "severity": "LOW", "https_only": false},
+          {"header": "Referrer-Policy", "severity": "LOW", "https_only": false}
+        ]
+      },
+      "https": {
+        "request_timeout": 5,
+        "http_page_severity": "MEDIUM",
+        "sensitive_http_severity": "HIGH",
+        "missing_redirect_severity": "MEDIUM",
+        "sensitive_control_types": ["password"]
+      },
+      "cookie_flags": {
+        "session_cookie_name_terms": ["session", "auth", "token", "sid", "jwt", "jsessionid"],
+        "check_all_cookies": false,
+        "missing_secure_severity": "HIGH",
+        "missing_httponly_severity": "MEDIUM",
+        "missing_samesite_severity": "LOW"
+      },
+      "login_errors": {
+        "nonexistent_username": "definitely_not_a_user_zzq9x",
+        "candidate_usernames": ["admin"],
+        "wrong_password": "banon_wrong_password_check_1",
+        "severity": "MEDIUM",
+        "enumeration_signals": {
+          "messages": true,
+          "body_length": true,
+          "minimum_body_length_ratio": 0.15
+        }
+      },
+      "session_rotation": {
+        "session_cookie_name_terms": ["session", "auth", "token", "sid", "jwt", "jsessionid"],
+        "severity": "HIGH"
+      },
+      "protected_routes": {
+        "request_timeout": 5,
+        "denied_status_codes": [301, 302, 303, 401, 403],
+        "content_similarity_threshold": 0.9,
+        "maximum_routes": 25,
+        "severity": "HIGH"
+      },
+      "logout_invalidation": {
+        "request_timeout": 5,
+        "authenticated_content_similarity": 0.9,
+        "severity": "HIGH"
+      },
+      "back_cache": {
+        "request_timeout": 5,
+        "cache_directive_terms": ["no-store", "no-cache"],
+        "sensitive_content_min_length": 40,
+        "missing_cache_control_severity": "LOW",
+        "cached_after_logout_severity": "HIGH"
+      },
+      "login_rate_limit": {
+        "attempts": 3,
+        "username": "admin",
+        "wrong_password": "banon_wrong_password_rate_limit",
+        "minimum_delay_seconds": 2.0,
+        "lockout_terms": ["too many", "rate limit", "try again", "locked", "disabled", "captcha", "slow down", "temporarily blocked"],
+        "maximum_messages": 10,
+        "severity": "MEDIUM"
+      },
+      "password_policy": {
+        "weak_password": "password",
+        "test_email": "banon_policy@example.invalid",
+        "form_terms": ["register", "registration", "sign up", "signup", "create account", "new password", "confirm password", "change password"],
+        "skip_terms": ["login", "log in", "sign in", "current password"],
+        "rejection_terms": ["weak", "short", "minimum", "complex", "requirement", "uppercase", "lowercase", "number", "special", "too common", "invalid"],
+        "safe_values": {
+          "default": "banon_policy",
+          "email": "banon_policy@example.invalid",
+          "number": "1",
+          "checkbox": "true",
+          "radio": "true"
+        },
+        "severity": "HIGH"
+      },
+      "reset_enum": {
+        "valid_identity": "user@example.invalid",
+        "invalid_identity": "definitely_not_a_user_zzq9x@example.invalid",
+        "form_terms": ["forgot", "reset", "recover", "recovery"],
+        "minimum_body_length_ratio": 0.15,
+        "severity": "MEDIUM"
+      },
+      "csrf_presence": {
+        "token_terms": ["csrf", "xsrf", "token", "nonce", "authenticity"],
+        "skip_terms": ["search"],
+        "severity": "MEDIUM"
+      },
+      "csrf_uniqueness": {
+        "request_timeout": 5,
+        "sample_count": 2,
+        "minimum_token_length": 8,
+        "token_terms": ["csrf", "xsrf", "token", "nonce", "authenticity"],
+        "skip_terms": ["search"],
+        "severity": "MEDIUM"
+      },
+      "form_validation": {
+        "request_timeout": 5,
+        "maximum_forms": 1,
+        "invalid_value": "",
+        "control_types": ["text", "email", "search", "textarea", "number", "tel", "select-one"],
+        "skip_terms": ["delete", "remove", "logout", "log out", "sign out", "pay", "purchase", "transfer", "upload"],
+        "validation_terms": ["required", "invalid", "error", "must", "missing", "enter", "select", "cannot", "blank"],
+        "error_terms": ["internal server error", "traceback", "stack trace", "unhandled exception", "application error"],
+        "server_error_status_codes": [500, 501, 502, 503, 504],
+        "severity": "LOW"
+      },
+      "input_robustness": {
+        "request_timeout": 5,
+        "maximum_forms": 1,
+        "payload": "banon_'\\\"><>&%{}[]_long_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA_\\u2603",
+        "control_types": ["text", "email", "search", "textarea", "url", "tel"],
+        "skip_terms": ["delete", "remove", "logout", "log out", "sign out", "pay", "purchase", "transfer", "upload"],
+        "error_terms": ["internal server error", "traceback", "stack trace", "unhandled exception", "application error"],
+        "server_error_status_codes": [500, 501, 502, 503, 504],
+        "severity": "MEDIUM"
+      },
+      "role_ui": {
+        "admin_terms": ["admin", "administrator", "manage users", "user management", "restore", "backup"],
+        "maximum_matches": 10,
+        "severity": "MEDIUM"
+      },
+      "cross_user_access": {
+        "request_timeout": 5,
+        "maximum_routes": 20,
+        "content_similarity_threshold": 0.9,
+        "resource_url_patterns": ["/[0-9]+(?:$|[/?#])", "[?&](id|user|uid|account|file|name)=", "/profile/", "/files/", "/download"],
+        "severity": "HIGH"
+      },
+      "browser_storage": {
+        "secret_patterns": ["password", "passwd", "secret", "token", "jwt", "api[_-]?key", "access[_-]?key", "session", "auth"],
+        "maximum_matches": 20,
+        "severity": "HIGH"
+      },
+      "insecure_form_action": {
+        "password_form_severity": "HIGH",
+        "default_severity": "MEDIUM"
+      },
+      "mixed_content": {
+        "active_tags": ["script", "link", "iframe", "object", "embed"],
+        "active_severity": "HIGH",
+        "passive_severity": "LOW",
+        "maximum_matches": 20
+      },
+      "info_headers": {
+        "request_timeout": 5,
+        "disclosure_headers": ["Server", "X-Powered-By", "X-AspNet-Version", "X-AspNetMvc-Version", "X-Generator", "X-Runtime", "X-Backend-Server", "Via"],
+        "version_pattern": "\\d+\\.\\d+",
+        "severity": "INFO",
+        "version_severity": "LOW"
+      },
+      "csp_strength": {
+        "request_timeout": 5,
+        "unsafe_tokens": ["'unsafe-inline'", "'unsafe-eval'"],
+        "unsafe_severity": "MEDIUM",
+        "wildcard_severity": "MEDIUM",
+        "missing_directive_severity": "LOW",
+        "recommended_directives": ["frame-ancestors", "base-uri"]
+      },
+      "url_secrets": {
+        "sensitive_param_terms": ["password", "passwd", "pwd", "token", "secret", "apikey", "access_token", "auth", "session", "sessionid", "sid", "jwt", "key", "otp", "credential"],
+        "severity": "MEDIUM"
+      }
+    }
+  },
+  "lists": {},
+  "evidence": {
+    "output_directory": "reports",
+    "report_filename": "banon-scan-{timestamp}.json",
+    "html_report_filename": "banon-scan-{timestamp}.html",
+    "log_directory": "logs",
+    "log_filename": "banon-scan-{timestamp}.log"
+  }
+}

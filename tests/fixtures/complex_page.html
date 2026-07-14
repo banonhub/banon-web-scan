@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Complex inventory fixture</title></head>
+<body>
+  <form action="/session" method="post">
+    <label for="identity">Account identity</label>
+    <input id="identity" name="identity" autocomplete="username">
+    <label for="secret">Secret</label>
+    <input id="secret" name="secret" type="password">
+    <button type="submit">Continue</button>
+  </form>
+  <div id="shadow-host"></div>
+  <iframe src="frame.html" title="Fixture frame"></iframe>
+  <script>
+    const root = document.querySelector("#shadow-host").attachShadow({mode: "open"});
+    root.innerHTML = `
+      <label for="shadow-query">Shadow query</label>
+      <input id="shadow-query" type="search">
+    `;
+  </script>
+</body>
+</html>
